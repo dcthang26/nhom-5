@@ -44,13 +44,13 @@
           </a>
           <ul class="nav nav-treeview">
             <li class="nav-item">
-              <a href="#" class="nav-link">
+              <a href="<?= BASE_URL ?>?act=admin/tours" class="nav-link">
                 <i class="nav-icon bi bi-circle"></i>
                 <p>Danh sách Tour</p>
               </a>
             </li>
             <li class="nav-item">
-              <a href="#" class="nav-link">
+              <a href="<?= BASE_URL ?>?act=admin/tours/add" class="nav-link">
                 <i class="nav-icon bi bi-circle"></i>
                 <p>Thêm Tour mới</p>
               </a>
@@ -67,7 +67,7 @@
           </a>
           <ul class="nav nav-treeview">
             <li class="nav-item">
-              <a href="#" class="nav-link">
+              <a href="<?= BASE_URL ?>?act=admin/customers" class="nav-link">
                 <i class="nav-icon bi bi-circle"></i>
                 <p>Danh sách Khách hàng</p>
               </a>
@@ -76,23 +76,43 @@
         </li>
         <?php if (isAdmin()): ?>
           <li class="nav-item">
-            <a href="#" class="nav-link">
-              <i class="nav-icon bi bi-person-gear"></i>
-              <p>
-                Quản lý Người dùng
-                <i class="nav-arrow bi bi-chevron-right"></i>
-              </p>
+            <a href="<?= BASE_URL ?>?act=admin/revenue" class="nav-link">
+              <i class="nav-icon bi bi-graph-up"></i>
+              <p>Báo cáo Doanh thu</p>
             </a>
-            <ul class="nav nav-treeview">
-              <li class="nav-item">
-                <a href="#" class="nav-link">
-                  <i class="nav-icon bi bi-circle"></i>
-                  <p>Danh sách Người dùng</p>
-                </a>
-              </li>
-            </ul>
           </li>
         <?php endif; ?>
+        <li class="nav-header">HƯỚNG DẪN VIÊN</li>
+        <li class="nav-item">
+          <a href="<?= BASE_URL ?>?act=guide/schedule" class="nav-link">
+            <i class="nav-icon bi bi-calendar3"></i>
+            <p>Lịch trình Tour</p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="<?= BASE_URL ?>?act=guide/customers" class="nav-link">
+            <i class="nav-icon bi bi-people"></i>
+            <p>Khách trong đoàn</p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="<?= BASE_URL ?>?act=guide/diary" class="nav-link">
+            <i class="nav-icon bi bi-journal-text"></i>
+            <p>Nhật ký Tour</p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="<?= BASE_URL ?>?act=guide/checkin" class="nav-link">
+            <i class="nav-icon bi bi-check2-square"></i>
+            <p>Điểm danh</p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="<?= BASE_URL ?>?act=guide/requirements" class="nav-link">
+            <i class="nav-icon bi bi-exclamation-triangle"></i>
+            <p>Yêu cầu đặc biệt</p>
+          </a>
+        </li>
         <li class="nav-header">HỆ THỐNG</li>
         <li class="nav-item">
           <a href="<?= BASE_URL . 'logout' ?>" class="nav-link">

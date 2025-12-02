@@ -49,7 +49,7 @@ function asset(string $path): string
 // Khởi động session nếu chưa khởi động(session là một cơ chế để lưu trữ dữ liệu trên server)
 function startSession()
 {
-    if (session_status() === PHP_SESSION_NONE) {
+    if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
         session_start();
     }
 }
