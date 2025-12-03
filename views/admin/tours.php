@@ -1,5 +1,4 @@
 <?php
-// Xử lý xóa tour
 if (isset($_GET['delete'])) {
     $index = $_GET['delete'];
     startSession();
@@ -11,7 +10,6 @@ if (isset($_GET['delete'])) {
     exit;
 }
 
-// Xử lý cập nhật tour
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_tour'])) {
     $index = $_POST['tour_index'];
     startSession();
@@ -29,7 +27,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_tour'])) {
     exit;
 }
 
-// Lấy danh sách tour
 startSession();
 if (!isset($_SESSION['admin_tours'])) {
     $_SESSION['admin_tours'] = [
@@ -91,7 +88,7 @@ ob_start();
   </div>
 </div>
 
-<!-- Modal xem chi tiết tour -->
+<div class="modal fade" id="viewTourModal" tabindex="-1">
 <div class="modal fade" id="viewTourModal" tabindex="-1">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
@@ -125,7 +122,7 @@ ob_start();
   </div>
 </div>
 
-<!-- Modal sửa tour -->
+<div class="modal fade" id="editTourModal" tabindex="-1">
 <div class="modal fade" id="editTourModal" tabindex="-1">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
