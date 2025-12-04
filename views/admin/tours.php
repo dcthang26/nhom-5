@@ -30,10 +30,58 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_tour'])) {
 startSession();
 if (!isset($_SESSION['admin_tours'])) {
     $_SESSION['admin_tours'] = [
-        ['id' => 1, 'name' => 'Tour Hạ Long 3N2Đ', 'destination' => 'Hạ Long, Quảng Ninh', 'duration' => '3 ngày 2 đêm', 'price' => '2500000', 'status' => 'Hoạt động'],
-        ['id' => 2, 'name' => 'Tour Sapa 4N3Đ', 'destination' => 'Sapa, Lào Cai', 'duration' => '4 ngày 3 đêm', 'price' => '3200000', 'status' => 'Hoạt động'],
-        ['id' => 3, 'name' => 'Tour Phú Quốc 5N4Đ', 'destination' => 'Phú Quốc, Kiên Giang', 'duration' => '5 ngày 4 đêm', 'price' => '4800000', 'status' => 'Tạm dừng'],
-        ['id' => 4, 'name' => 'Tour Đà Nẵng 3N2Đ', 'destination' => 'Đà Nẵng, Hội An', 'duration' => '3 ngày 2 đêm', 'price' => '2800000', 'status' => 'Hoạt động'],
+        [
+            'id' => 1, 
+            'name' => 'Tour Hạ Long 3N2Đ', 
+            'destination' => 'Hạ Long, Quảng Ninh', 
+            'duration' => '3 ngày 2 đêm', 
+            'price' => '2500000', 
+            'status' => 'Hoạt động',
+            'description' => 'Khám phá vẻ đẹp thiên nhiên kỳ vĩ của Vịnh Hạ Long với hàng nghìn hòn đảo lớn nhỏ.',
+            'itinerary' => 'Ngày 1: Đón khách - Tham quan Động Thiên Cung\nNgày 2: Du thuyền trên vịnh - Tham quan Làng chèo\nNgày 3: Tham quan chợ Đồng Xuân - Trở về',
+            'includes' => '- Vé tàu khứ hồi\n- Khách sạn 3 sao\n- Ăn 3 bữa/ngày\n- Hướng dẫn viên',
+            'excludes' => '- Chi phí cá nhân\n- Bảo hiểm du lịch\n- Tip hướng dẫn viên',
+            'image' => 'halong.jpg'
+        ],
+        [
+            'id' => 2, 
+            'name' => 'Tour Sapa 4N3Đ', 
+            'destination' => 'Sapa, Lào Cai', 
+            'duration' => '4 ngày 3 đêm', 
+            'price' => '3200000', 
+            'status' => 'Hoạt động',
+            'description' => 'Trải nghiệm vùng núi Tây Bắc hùng vĩ với ruộng bậc thang và văn hóa dân tộc.',
+            'itinerary' => 'Ngày 1: Hà Nội - Sapa\nNgày 2: Trekking Cat Cat - Ta Van\nNgày 3: Chinh phục đỉnh Fansipan\nNgày 4: Tham quan chợ Sapa - Trở về',
+            'includes' => '- Vé tàu giường nằm\n- Homestay + Khách sạn\n- Ăn theo chương trình\n- Vé cáp treo Fansipan',
+            'excludes' => '- Ăn uống ngoài chương trình\n- Giặt ủi\n- Đồ dùng cá nhân',
+            'image' => 'sapa.jpg'
+        ],
+        [
+            'id' => 3, 
+            'name' => 'Tour Phú Quốc 5N4Đ', 
+            'destination' => 'Phú Quốc, Kiên Giang', 
+            'duration' => '5 ngày 4 đêm', 
+            'price' => '4800000', 
+            'status' => 'Tạm dừng',
+            'description' => 'Nghỉ dưỡng tại đảo ngọc Phú Quốc với những bãi biển tuyệt đẹp và hải sản tươi ngon.',
+            'itinerary' => 'Ngày 1: Bay đến Phú Quốc - Nhận phòng\nNgày 2-3: Tour 4 đảo - Lặn biển ngắm san hô\nNgày 4: Cáp treo Hòn Thơm - Chợ đêm Diênh Cau\nNgày 5: Tự do - Bay về',
+            'includes' => '- Vé máy bay khứ hồi\n- Resort 4 sao\n- Ăn sáng hàng ngày\n- Tour theo chương trình',
+            'excludes' => '- Ăn trưa, tối\n- Dịch vụ Spa\n- Mua sắm cá nhân',
+            'image' => 'phuquoc.jpg'
+        ],
+        [
+            'id' => 4, 
+            'name' => 'Tour Đà Nẵng 3N2Đ', 
+            'destination' => 'Đà Nẵng, Hội An', 
+            'duration' => '3 ngày 2 đêm', 
+            'price' => '2800000', 
+            'status' => 'Hoạt động',
+            'description' => 'Khám phá thành phố Đà Nẵng hiện đại và phố cổ Hội An thơ mộng.',
+            'itinerary' => 'Ngày 1: Bay đến Đà Nẵng - Bà Nà Hills\nNgày 2: Hội An - Phố cổ - Đèn lồng\nNgày 3: Cầu Vàng - Chùa Linh Ứng - Bay về',
+            'includes' => '- Vé máy bay\n- Khách sạn 4 sao\n- Ăn theo tour\n- Vé tham quan',
+            'excludes' => '- Ăn uống tự túc\n- Mua sắm\n- Massage, Spa',
+            'image' => 'danang.jpg'
+        ],
     ];
 }
 $tours = $_SESSION['admin_tours'];
@@ -69,12 +117,12 @@ ob_start();
                 <td><?= $tour['name'] ?></td>
                 <td><?= $tour['destination'] ?></td>
                 <td>
-                  <button class="btn btn-info btn-sm" onclick="viewTour(<?= $index ?>)">
+                  <a href="<?= BASE_URL ?>?act=admin/tours/view&id=<?= $tour['id'] ?>" class="btn btn-info btn-sm">
                     <i class="bi bi-eye"></i>
-                  </button>
-                  <button class="btn btn-warning btn-sm" onclick="editTour(<?= $index ?>)">
+                  </a>
+                  <a href="<?= BASE_URL ?>?act=admin/tours/edit&id=<?= $tour['id'] ?>" class="btn btn-warning btn-sm">
                     <i class="bi bi-pencil"></i>
-                  </button>
+                  </a>
                   <button class="btn btn-danger btn-sm" onclick="deleteTour(<?= $index ?>)">
                     <i class="bi bi-trash"></i>
                   </button>
@@ -89,128 +137,15 @@ ob_start();
 </div>
 
 <div class="modal fade" id="viewTourModal" tabindex="-1">
-<div class="modal fade" id="viewTourModal" tabindex="-1">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Chi tiết Tour</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body">
-        <div class="row">
-          <div class="col-md-6">
-            <p><strong>Tên Tour:</strong> <span id="viewTourName"></span></p>
-            <p><strong>Điểm đến:</strong> <span id="viewTourDestination"></span></p>
-            <p><strong>Thời gian:</strong> <span id="viewTourDuration"></span></p>
-          </div>
-          <div class="col-md-6">
-            <p><strong>Giá tour:</strong> <span id="viewTourPrice"></span> VNĐ</p>
-            <p><strong>Trạng thái:</strong> <span id="viewTourStatus" class="badge"></span></p>
-            <p><strong>ID Tour:</strong> <span id="viewTourId"></span></p>
-          </div>
-        </div>
-        <hr>
-        <div class="alert alert-info">
-          <i class="bi bi-info-circle"></i>
-          Đây là thông tin cơ bản của tour. Để chỉnh sửa, vui lòng sử dụng nút "Sửa".
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-      </div>
-    </div>
-  </div>
-</div>
+
 
 <div class="modal fade" id="editTourModal" tabindex="-1">
-<div class="modal fade" id="editTourModal" tabindex="-1">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Chỉnh sửa Tour</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-      <form method="post" id="editTourForm">
-        <div class="modal-body">
-          <input type="hidden" name="tour_index" id="editTourIndex">
-          <div class="row">
-            <div class="col-md-6">
-              <div class="mb-3">
-                <label class="form-label">Tên Tour *</label>
-                <input type="text" class="form-control" name="name" id="editTourName" required>
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="mb-3">
-                <label class="form-label">Điểm đến *</label>
-                <input type="text" class="form-control" name="destination" id="editTourDestination" required>
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-4">
-              <div class="mb-3">
-                <label class="form-label">Thời gian</label>
-                <input type="text" class="form-control" name="duration" id="editTourDuration">
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="mb-3">
-                <label class="form-label">Giá (VNĐ) *</label>
-                <input type="number" class="form-control" name="price" id="editTourPrice" required>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="mb-3">
-                <label class="form-label">Trạng thái</label>
-                <select class="form-select" name="status" id="editTourStatus">
-                  <option value="Hoạt động">Hoạt động</option>
-                  <option value="Tạm dừng">Tạm dừng</option>
-                </select>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-          <button type="submit" name="update_tour" class="btn btn-primary">Cập nhật</button>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
+
 
 <script>
-function viewTour(index) {
-  const tours = <?= json_encode($tours) ?>;
-  const tour = tours[index];
-  
-  document.getElementById('viewTourName').textContent = tour.name;
-  document.getElementById('viewTourDestination').textContent = tour.destination;
-  document.getElementById('viewTourDuration').textContent = tour.duration;
-  document.getElementById('viewTourPrice').textContent = new Intl.NumberFormat('vi-VN').format(tour.price);
-  document.getElementById('viewTourId').textContent = tour.id;
-  
-  const statusBadge = document.getElementById('viewTourStatus');
-  statusBadge.textContent = tour.status;
-  statusBadge.className = 'badge ' + (tour.status === 'Hoạt động' ? 'bg-success' : 'bg-warning');
-  
-  new bootstrap.Modal(document.getElementById('viewTourModal')).show();
-}
 
-function editTour(index) {
-  const tours = <?= json_encode($tours) ?>;
-  const tour = tours[index];
-  
-  document.getElementById('editTourIndex').value = index;
-  document.getElementById('editTourName').value = tour.name;
-  document.getElementById('editTourDestination').value = tour.destination;
-  document.getElementById('editTourDuration').value = tour.duration;
-  document.getElementById('editTourPrice').value = tour.price;
-  document.getElementById('editTourStatus').value = tour.status;
-  
-  new bootstrap.Modal(document.getElementById('editTourModal')).show();
-}
+
+
 
 function deleteTour(index) {
   if (confirm('Bạn có chắc muốn xóa tour này?')) {

@@ -1,4 +1,24 @@
 <?php
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_tour'])) {
+    startSession();
+    if (!isset($_SESSION['admin_tours'])) {
+        $_SESSION['admin_tours'] = [];
+    }
+    
+    $newId = count($_SESSION['admin_tours']) + 1;
+    $_SESSION['admin_tours'][] = [
+        'id' => $newId,
+        'name' => $_POST['name'],
+        'destination' => $_POST['destination'],
+        'duration' => $_POST['duration'],
+        'price' => $_POST['price'],
+        'status' => $_POST['status'] === 'active' ? 'Hoạt động' : 'Tạm dừng'
+    ];
+    
+    header('Location: ' . BASE_URL . '?act=admin/tours');
+    exit;
+}
+
 ob_start();
 ?>
 
@@ -8,19 +28,19 @@ ob_start();
       <div class="card-header">
         <h3 class="card-title">Thông tin Tour</h3>
       </div>
-      <form id="tourForm">
+      <form method="post" id="tourForm">
         <div class="card-body">
           <div class="row">
             <div class="col-md-6">
               <div class="mb-3">
                 <label for="tourName" class="form-label">Tên Tour *</label>
-                <input type="text" class="form-control" id="tourName" required>
+                <input type="text" class="form-control" id="tourName" name="name" required>
               </div>
             </div>
             <div class="col-md-6">
               <div class="mb-3">
                 <label for="destination" class="form-label">Điểm đến *</label>
-                <input type="text" class="form-control" id="destination" required>
+                <input type="text" class="form-control" id="destination" name="destination" required>
               </div>
             </div>
           </div>
@@ -29,13 +49,13 @@ ob_start();
             <div class="col-md-4">
               <div class="mb-3">
                 <label for="duration" class="form-label">Thời gian</label>
-                <input type="text" class="form-control" id="duration" placeholder="VD: 3 ngày 2 đêm">
+                <input type="text" class="form-control" id="duration" name="duration" placeholder="VD: 3 ngày 2 đêm">
               </div>
             </div>
             <div class="col-md-4">
               <div class="mb-3">
                 <label for="price" class="form-label">Giá Tour (VNĐ) *</label>
-                <input type="number" class="form-control" id="price" required>
+                <input type="number" class="form-control" id="price" name="price" required>
               </div>
             </div>
             <div class="col-md-4">
@@ -56,7 +76,7 @@ ob_start();
             <div class="col-md-6">
               <div class="mb-3">
                 <label for="status" class="form-label">Trạng thái</label>
-                <select class="form-select" id="status">
+                <select class="form-select" id="status" name="status">
                   <option value="active">Hoạt động</option>
                   <option value="inactive">Tạm dừng</option>
                 </select>
@@ -86,7 +106,7 @@ ob_start();
         </div>
         
         <div class="card-footer">
-          <button type="submit" class="btn btn-primary">
+          <button type="submit" name="add_tour" class="btn btn-primary">
             <i class="bi bi-check"></i> Lưu Tour
           </button>
           <a href="<?= BASE_URL ?>?act=admin/tours" class="btn btn-secondary">
@@ -98,23 +118,7 @@ ob_start();
   </div>
 </div>
 
-<script>
-document.getElementById('tourForm').addEventListener('submit', function(e) {
-  e.preventDefault();
-  
-  const tourName = document.getElementById('tourName').value;
-  const destination = document.getElementById('destination').value;
-  const price = document.getElementById('price').value;
-  
-  if (!tourName || !destination || !price) {
-    alert('Vui lòng điền đầy đủ thông tin bắt buộc!');
-    return;
-  }
-  
-  alert('Đã lưu tour: ' + tourName);
-  window.location.href = '<?= BASE_URL ?>?act=admin/tours';
-});
-</script>
+
 
 <?php
 $content = ob_get_clean();

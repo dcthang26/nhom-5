@@ -33,4 +33,20 @@ class AdminController
             'pageTitle' => 'Thêm Tour mới',
         ]);
     }
+
+    public function editTour()
+    {
+        view('admin.edit-tour', [
+            'title' => 'Chỉnh sửa Tour',
+            'pageTitle' => 'Chỉnh sửa Tour',
+        ]);
+    }
+
+    public function viewTour()
+    {
+        view('admin.view-tour', [
+            'title' => 'Chi tiết Tour',
+            'pageTitle' => 'Chi tiết Tour',
+        ]);
+    }
 }

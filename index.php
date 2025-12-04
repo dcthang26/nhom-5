@@ -43,6 +43,8 @@ match ($act) {
     'admin/customers' => $adminController->customers(),
     'admin/tours' => $adminController->tours(),
     'admin/tours/add' => $adminController->addTour(),
+    'admin/tours/edit' => $adminController->editTour(),
+    'admin/tours/view' => $adminController->viewTour(),
 
     // Hướng dẫn viên
     'guide/schedule' => $guideController->schedule(),
