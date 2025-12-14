@@ -1,202 +1,134 @@
-<?php
-// Xử lý thêm yêu cầu mới
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['customer'])) {
-    $customer = $_POST['customer'];
-    $type = $_POST['type'];
-    $detail = $_POST['detail'];
-    
-    // Lưu vào session (thực tế sẽ lưu vào database)
-    startSession();
-    if (!isset($_SESSION['requirements'])) {
-        $_SESSION['requirements'] = [];
-    }
-    $_SESSION['requirements'][] = [
-        'customer' => $customer,
-        'type' => $type,
-        'detail' => $detail,
-        'status' => 'Đang chuẩn bị',
-        'time' => date('Y-m-d H:i:s')
-    ];
-    
-    // Chuyển hướng để tránh gửi lại form
-    header('Location: ' . BASE_URL . '?act=guide/requirements');
-    exit;
-}
-
-// Xử lý xóa yêu cầu
-if (isset($_GET['delete'])) {
-    $index = (int)$_GET['delete'];
-    startSession();
-    if (isset($_SESSION['requirements'][$index])) {
-        unset($_SESSION['requirements'][$index]);
-        $_SESSION['requirements'] = array_values($_SESSION['requirements']); // Re-index array
-    }
-    header('Location: ' . BASE_URL . '?act=guide/requirements');
-    exit;
-}
-
-// Lấy danh sách yêu cầu từ session
-startSession();
-$requirements = $_SESSION['requirements'] ?? [];
-
+<?php 
 ob_start();
 ?>
 
-<div class="row">
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">Thêm yêu cầu mới</h3>
-            </div>
-            <div class="card-body">
-                <form method="post">
-                    <div class="mb-3">
-                        <label class="form-label">Khách hàng</label>
-                        <select class="form-control" name="customer" required>
-                            <option value="">Chọn khách hàng</option>
-                            <option>Nguyễn Văn An</option>
-                            <option>Trần Thị Bình</option>
-                            <option>Lê Minh Cường</option>
-                            <option>Phạm Thị Dung</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Loại yêu cầu</label>
-                        <select class="form-control" name="type" required>
-                            <option value="">Chọn loại</option>
-                            <option>Ăn uống</option>
-                            <option>Y tế</option>
-                            <option>Hỗ trợ</option>
-                            <option>Khác</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Chi tiết yêu cầu</label>
-                        <textarea class="form-control" name="detail" rows="3" required placeholder="Mô tả chi tiết yêu cầu..."></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="bi bi-plus"></i> Thêm yêu cầu
-                    </button>
-                </form>
-            </div>
-        </div>
+<div class="row mb-3">
+  <div class="col-md-4">
+    <div class="card bg-info text-white">
+      <div class="card-body text-center">
+        <h6>Tổng Khách</h6>
+        <h3><?= count($customers) ?></h3>
+      </div>
     </div>
-    
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">Yêu cầu hiện có (<?= count($requirements) ?>)</h3>
-            </div>
-            <div class="card-body">
-                <?php if (empty($requirements)): ?>
-                    <p class="text-muted">Chưa có yêu cầu nào.</p>
-                <?php else: ?>
-                    <div class="table-responsive">
-                        <table class="table table-sm table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Khách hàng</th>
-                                    <th>Loại</th>
-                                    <th>Chi tiết</th>
-                                    <th>Trạng thái</th>
-                                    <th>Thao tác</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ($requirements as $index => $req): ?>
-                                <tr>
-                                    <td><?= htmlspecialchars($req['customer']) ?></td>
-                                    <td><span class="badge bg-info"><?= htmlspecialchars($req['type']) ?></span></td>
-                                    <td><?= htmlspecialchars($req['detail']) ?></td>
-                                    <td><span class="badge bg-warning"><?= htmlspecialchars($req['status']) ?></span></td>
-                                    <td>
-                                        <a href="?act=guide/requirements&delete=<?= $index ?>" 
-                                           class="btn btn-danger btn-sm" 
-                                           onclick="return confirm('Bạn có chắc muốn xóa yêu cầu này?')">
-                                            <i class="bi bi-trash"></i>
-                                        </a>
-                                    </td>
-                                </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
-                    </div>
-                <?php endif; ?>
-            </div>
-        </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card bg-warning text-white">
+      <div class="card-body text-center">
+        <h6> Có yêu cầu đặc biệt</h6>
+        <h3><?= count(array_filter($customers, fn($c) => !empty($c['special_requirements']))) ?></h3>
+      </div>
     </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card bg-success text-white">
+      <div class="card-body text-center">
+        <h6>Không Yêu Cầu</h6>
+        <h3><?= count(array_filter($customers, fn($c) => empty($c['special_requirements']))) ?></h3>
+      </div>
+    </div>
+  </div>
 </div>
 
-<div class="row mt-3">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">Checklist chuẩn bị</h3>
-            </div>
-            <div class="card-body">
-                <form method="post">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="check1">
-                                <label class="form-check-label" for="check1">
-                                    Chuẩn bị suất ăn chay
-                                </label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="check2">
-                                <label class="form-check-label" for="check2">
-                                    Kiểm tra thuốc dị ứng
-                                </label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="check3">
-                                <label class="form-check-label" for="check3">
-                                    Thông báo nhà hàng
-                                </label>
-                            </div>
+<div class="card">
+  <div class="card-header">
+    <h3 class="card-title">Yêu Cầu đặc biệt của khách</h3>
+  </div>
+  <div class="card-body">
+    <table class="table table-bordered table-striped">
+      <thead>
+        <tr>
+          <th>STT</th>
+          <th>Họ Tên</th>
+          <th>Liên Hệ</th>
+          <th>Tour</th>
+          <th>Yêu Cầu Đặc Biệt</th>
+          <th>Thao Tác</th>
+        </tr>
+      </thead>
+      <tbody>
+        <?php if(empty($customers)): ?>
+          <tr>
+            <td colspan="6" class="text-center text-muted"> Chưa có khách</td>
+          </tr>
+          <?php else: ?>
+            <?php foreach($customers as $index => $c): ?>
+              <tr>
+                <td><?=  $index + 1 ?></td>
+                <td>
+                  <strong><?=  htmlspecialchars($c['name']) ?></strong><br>
+                  <small class="text-muted">
+                    <?php if ($c['gender']): ?>
+                      <?= $c['gender'] ?>
+                      <?php endif; ?>
+                      <?php if ($c['birth_year']): ?>
+                      <?= $c['birth_year'] ?>
+                      <?php endif; ?>
+                  </small>
+                </td>
+                <td>
+                  <?php if ($c['phone']): ?>
+                    <i class=" bi bi-telephone"></i> <?=  htmlspecialchars($c['phone']) ?><br>
+                    <?php endif; ?>
+                    <?php if ($c['email']): ?>
+                    <small><i class=" bi bi-envelope"></i> <?=  htmlspecialchars($c['email']) ?></small>
+                    <?php endif; ?>
+                </td>
+                <td>
+                  <?=  htmlspecialchars($c['tour_name'] ?? 'N/A') ?><br>
+                  <?php if ($c['start_date']): ?>
+                    <small class="text-muted"><?=  date('d/m/Y', strtotime(($c['start_date']))) ?></small>
+                    <?php endif; ?>
+                </td>
+                <td>
+                  <?php if (!empty($c['special_requirements'])): ?>
+                    <span class="badge bg-warning text-dark mb-1">
+                      <i class=" bi bi-exclamation-triangle"></i> Có yêu cầu
+                    </span><br>
+                    <small><?=  htmlspecialchars($c['special_requirements']) ?></small>
+                    <?php else: ?>
+                      <span class="badge bg-success">Không Có</span>
+                      <?php endif; ?>
+                </td>
+                <td class="text-center">
+                  <button class="btn btn-sm btn-primary" data-bstoggle="modal" data-bs-target="#editmodal<?=  $c['id'] ?>">
+                    <i class="bi bi-pencil"></i> Cập Nhật
+                  </button>
+                </td>
+              </tr>
+              <div class="modal fade" id="editmodal<?=  $c['id'] ?>" tabindex="-1">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <form method="post" action="<?= BASE_URL ?>guide/update-requirement">
+                      <div class="modal-header">
+                        <h5 class="modal-title">Cập Nhật Yêu Cầu - <?=  htmlspecialchars($c['name']) ?></h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                      </div>
+                      <div class="modal-body">
+                        <input type="hidden" name="customer_id" value="<?= $c['id'] ?>">
+                        <div class="mb-3">
+                          <label> Yêu Cầu Đặc Biệt </label>
+                          <textarea class="form-control" name="special_requirements" rows="4"><?= htmlspecialchars($c['special_requirements'] ?? '') ?></textarea>
+                          <small class="text-muted"> Ví dụ: ăn chay, dị ứng, bệnh lý...</small>
                         </div>
-                        <div class="col-md-6">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="check4">
-                                <label class="form-check-label" for="check4">
-                                    Chuẩn bị thiết bị hỗ trợ
-                                </label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="check5">
-                                <label class="form-check-label" for="check5">
-                                    Chuẩn bị thuốc cơ bản
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="mt-3">
-                        <button type="button" class="btn btn-success" onclick="updateChecklist()">
-                            <i class="bi bi-check-all"></i> Cập nhật checklist
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                        <button type="submit" class="btn btn-primary">Cập Nhật</button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+              <?php endforeach; ?>
+              <?php endif; ?>
+      </tbody>
+    </table>
+  </div>
 </div>
-
-<script>
-function updateChecklist() {
-    alert('Checklist đã được cập nhật!');
-}
-</script>
-
-<?php
+<?php 
 $content = ob_get_clean();
-
-view('layouts.AdminLayout', [
-    'title' => $title ?? 'Yêu cầu đặc biệt',
-    'pageTitle' => $pageTitle ?? 'Yêu cầu đặc biệt',
-    'content' => $content,
-    'breadcrumb' => [
-        ['label' => 'Yêu cầu đặc biệt', 'url' => BASE_URL . 'guide/requirements', 'active' => true],
-    ],
+view('layouts.GuideLayout', [
+  'title' => 'Yêu Cầu Đặc Biệt Khách',
+  'content' => $content
 ]);
-?>
+ ?>
