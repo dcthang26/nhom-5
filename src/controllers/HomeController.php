@@ -22,16 +22,18 @@ class HomeController
     // Nếu chưa đăng nhập thì redirect về trang welcome
     public function home(): void
     {
-        // Yêu cầu phải đăng nhập, nếu chưa thì redirect về welcome
         if (!isLoggedIn()) {
             header('Location: ' . BASE_URL . 'welcome');
             exit;
         }
 
-        // Lấy thông tin user hiện tại (đã đảm bảo đăng nhập ở trên)
         $currentUser = getCurrentUser();
+        
+        if (isGuide()) {
+            header('Location: ' . BASE_URL . 'guide/dashboard');
+            exit;
+        }
 
-        // Hiển thị view home với dữ liệu title và user
         view('home', [
             'title' => 'Trang chủ - Website Quản Lý Tour',
             'user' => $currentUser,

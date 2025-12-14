@@ -30,7 +30,7 @@ class AuthController
         // Chỉ xử lý khi là POST request
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             header('Location: ' . BASE_URL . 'login');
-            exit;
+            exit; 
         }
 
         // Lấy dữ liệu từ form
@@ -61,22 +61,25 @@ class AuthController
             return;
         }
 
-        // Tạo user mẫu để đăng nhập (không kiểm tra database)
-        // Chỉ để demo giao diện
-        $user = new User([
-            'id' => 1,
-            'name' => 'Người dùng mẫu',
-            'email' => $email,
-            'role' => 'huong_dan_vien',
-            'status' => 1,
-        ]);
+        // Thuc hien  xac thuc voi db
+        $user = User::authenticate($email, $password);
 
-        // Đăng nhập thành công: lưu vào session
-        loginUser($user);
+        if($user) {
+            // dang nhap thanh cong va luu session 
+            loginUser($user);
 
-        // Chuyển hướng về trang được yêu cầu hoặc trang chủ
-        header('Location: ' . $redirect);
-        exit;
+            // chuyen huong ve trang chu 
+            header('Location: ' . $redirect);
+            exit();
+        }else {
+            // dang nhap that bai
+            view('auth.login', [
+                'title' => 'Đăng nhập',
+                'errors' => ['Email hoặc mật khẩu sai'],
+                'email' => $email,
+                'redirect' => $redirect,
+            ]);
+        }
     }
 
     // Xử lý đăng xuất
