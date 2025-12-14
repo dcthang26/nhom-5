@@ -4,9 +4,9 @@ ob_start();
 
 <div class="row mb-3">
   <div class="col-12">
-    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal">
-      <i class="bi bi-plus-circle"></i> Thêm HDV
-    </button>
+    <a href="<?= BASE_URL ?>admin/customers/add" class="btn btn-primary">
+      <i class="bi bi-plus-circle"></i> Thêm khách hàng
+    </a>
   </div>
 </div>
 
@@ -14,88 +14,154 @@ ob_start();
   <div class="col-12">
     <div class="card">
       <div class="card-header">
-        <h3 class="card-title">Danh sách Hướng dẫn viên (<?= count($guides) ?>)</h3>
+        <h3 class="card-title">Danh sách Khách hàng</h3>
       </div>
       <div class="card-body">
         <table class="table table-bordered table-striped">
           <thead>
             <tr>
               <th>ID</th>
-              <th>Họ tên</th>
+              <th>Tên</th>
+              <th>Giới tính</th>
+              <th>Năm sinh</th>
               <th>Điện thoại</th>
-              <th>Nhóm</th>
-              <th>Chuyên môn</th>
-              <th>Đánh giá</th>
+              <th>Tour</th>
+              <th>Thanh toán</th>
+              <th>Check-in</th>
               <th>Thao tác</th>
             </tr>
           </thead>
           <tbody>
-            <?php foreach ($guides as $g): ?>
+            <?php foreach ($customers as $c): ?>
               <tr>
-                <td>#<?= $g['id'] ?></td>
-                <td><?= htmlspecialchars($g['name'] ?? 'N/A') ?></td>
-                <td><?= htmlspecialchars($g['phone'] ?? '') ?></td>
+                <td>#<?= $c['id'] ?></td>
+                <td><?= htmlspecialchars($c['name']) ?></td>
+                <td><?= $c['gender'] ?? '' ?></td>
+                <td><?= $c['birth_year'] ?? '' ?></td>
+                <td><?= htmlspecialchars($c['phone'] ?? '') ?></td>
+                <td><?= htmlspecialchars($c['tour_name'] ?? 'Không có') ?></td>
                 <td>
-                  <span class="badge <?= $g['group_type'] == 'quốc tế' ? 'bg-primary' : 'bg-success' ?>">
-                    <?= ucfirst($g['group_type'] ?? 'N/A') ?>
+                  <span class="badge <?= $c['payment_status'] == 'Hoàn tất' ? 'bg-success' : ($c['payment_status'] == 'Đã cọc' ? 'bg-primary' : 'bg-warning') ?>">
+                    <?= $c['payment_status'] ?>
                   </span>
                 </td>
-                <td><?= htmlspecialchars($g['speciality'] ?? '') ?></td>
                 <td>
-                  <?php if ($g['rating']): ?>
-                    <span class="badge bg-warning"><?= $g['rating'] ?>/5.0</span>
-                  <?php endif; ?>
+                  <span class="badge <?= $c['check_in_status'] == 'Đã check-in' ? 'bg-success' : 'bg-secondary' ?>">
+                    <?= $c['check_in_status'] ?>
+                  </span>
                 </td>
                 <td>
-                  <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#viewModal<?= $g['id'] ?>">
+                  <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#viewModal<?= $c['id'] ?>">
                     <i class="bi bi-eye"></i>
                   </button>
-                  <a href="<?= BASE_URL ?>admin/guides?delete=<?= $g['id'] ?>" 
+                  <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editModal<?= $c['id'] ?>">
+                    <i class="bi bi-pencil"></i>
+                  </button>
+                  <a href="<?= BASE_URL ?>admin/customers?delete=<?= $c['id'] ?>" 
                      class="btn btn-sm btn-danger" 
-                     onclick="return confirm('Xóa HDV này?')">
+                     onclick="return confirm('Xóa khách hàng này?')">
                     <i class="bi bi-trash"></i>
                   </a>
                 </td>
               </tr>
 
               <!-- View Modal -->
-              <div class="modal fade" id="viewModal<?= $g['id'] ?>" tabindex="-1">
-                <div class="modal-dialog modal-lg">
+              <div class="modal fade" id="viewModal<?= $c['id'] ?>" tabindex="-1">
+                <div class="modal-dialog">
                   <div class="modal-content">
                     <div class="modal-header">
-                      <h5 class="modal-title">Hồ sơ HDV: <?= htmlspecialchars($g['name'] ?? '') ?></h5>
+                      <h5 class="modal-title">Chi tiết Khách hàng</h5>
                       <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body">
-                      <div class="row">
-                        <div class="col-md-6">
-                          <p><strong>Họ tên:</strong> <?= htmlspecialchars($g['name'] ?? '') ?></p>
-                          <p><strong>Email:</strong> <?= htmlspecialchars($g['email'] ?? 'Chưa có') ?></p>
-                          <p><strong>Điện thoại:</strong> <?= htmlspecialchars($g['phone'] ?? 'Chưa có') ?></p>
-                          <p><strong>Ngày sinh:</strong> <?= $g['birthdate'] ? date('d/m/Y', strtotime($g['birthdate'])) : 'Chưa có' ?></p>
+                      <p><strong>Họ tên:</strong> <?= htmlspecialchars($c['name']) ?></p>
+                      <p><strong>Giới tính:</strong> <?= $c['gender'] ?? 'Chưa có' ?></p>
+                      <p><strong>Năm sinh:</strong> <?= $c['birth_year'] ?? 'Chưa có' ?></p>
+                      <p><strong>CMND/CCCD:</strong> <?= htmlspecialchars($c['id_number'] ?? 'Chưa có') ?></p>
+                      <p><strong>Điện thoại:</strong> <?= htmlspecialchars($c['phone'] ?? 'Chưa có') ?></p>
+                      <p><strong>Email:</strong> <?= htmlspecialchars($c['email'] ?? 'Chưa có') ?></p>
+                      <p><strong>Địa chỉ:</strong> <?= htmlspecialchars($c['address'] ?? 'Chưa có') ?></p>
+                      <p><strong>Tour:</strong> <?= htmlspecialchars($c['tour_name'] ?? 'Không có') ?></p>
+                      <p><strong>Ngày khởi hành:</strong> <?= $c['start_date'] ? date('d/m/Y', strtotime($c['start_date'])) : 'Chưa có' ?></p>
+                      <p><strong>Thanh toán:</strong> <?= $c['payment_status'] ?></p>
+                      <p><strong>Check-in:</strong> <?= $c['check_in_status'] ?></p>
+                      <p><strong>Phòng:</strong> <?= $c['room_number'] ?? 'Chưa phân' ?></p>
+                      <p><strong>Yêu cầu cá nhân:</strong> <?= htmlspecialchars($c['special_requirements'] ?? 'Không có') ?></p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Edit Modal -->
+              <div class="modal fade" id="editModal<?= $c['id'] ?>" tabindex="-1">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <form method="post">
+                      <div class="modal-header">
+                        <h5 class="modal-title">Chỉnh sửa Khách hàng</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                      </div>
+                      <div class="modal-body">
+                        <input type="hidden" name="customer_id" value="<?= $c['id'] ?>">
+                        <div class="mb-3">
+                          <label>Họ tên <span class="text-danger">*</span></label>
+                          <input type="text" class="form-control" name="name" value="<?= htmlspecialchars($c['name']) ?>" required>
                         </div>
-                        <div class="col-md-6">
-                          <p><strong>Nhóm:</strong> <?= ucfirst($g['group_type'] ?? 'N/A') ?></p>
-                          <p><strong>Chuyên môn:</strong> <?= htmlspecialchars($g['speciality'] ?? 'Chưa có') ?></p>
-                          <p><strong>Đánh giá:</strong> <?= $g['rating'] ?? 'Chưa có' ?>/5.0</p>
-                          <p><strong>Sức khỏe:</strong> <?= htmlspecialchars($g['health_status'] ?? 'Chưa có') ?></p>
+                        <div class="row">
+                          <div class="col-md-6 mb-3">
+                            <label>Giới tính</label>
+                            <select class="form-select" name="gender">
+                              <option value="">Chọn</option>
+                              <option value="Nam" <?= $c['gender'] == 'Nam' ? 'selected' : '' ?>>Nam</option>
+                              <option value="Nữ" <?= $c['gender'] == 'Nữ' ? 'selected' : '' ?>>Nữ</option>
+                            </select>
+                          </div>
+                          <div class="col-md-6 mb-3">
+                            <label>Năm sinh</label>
+                            <input type="number" class="form-control" name="birth_year" value="<?= $c['birth_year'] ?? '' ?>">
+                          </div>
+                        </div>
+                        <div class="mb-3">
+                          <label>CMND/CCCD</label>
+                          <input type="text" class="form-control" name="id_number" value="<?= htmlspecialchars($c['id_number'] ?? '') ?>">
+                        </div>
+                        <div class="mb-3">
+                          <label>Điện thoại</label>
+                          <input type="text" class="form-control" name="phone" value="<?= htmlspecialchars($c['phone'] ?? '') ?>">
+                        </div>
+                        <div class="mb-3">
+                          <label>Email</label>
+                          <input type="email" class="form-control" name="email" value="<?= htmlspecialchars($c['email'] ?? '') ?>">
+                        </div>
+                        <div class="mb-3">
+                          <label>Tour</label>
+                          <select class="form-select" name="booking_id">
+                            <option value="">Không có booking</option>
+                            <?php foreach ($bookings as $b): ?>
+                              <option value="<?= $b['id'] ?>" <?= $c['booking_id'] == $b['id'] ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($b['tour_name']) ?>
+                              </option>
+                            <?php endforeach; ?>
+                          </select>
+                        </div>
+                        <div class="mb-3">
+                          <label>Thanh toán</label>
+                          <select class="form-select" name="payment_status">
+                            <option value="Chưa thanh toán" <?= $c['payment_status'] == 'Chưa thanh toán' ? 'selected' : '' ?>>Chưa thanh toán</option>
+                            <option value="Đã cọc" <?= $c['payment_status'] == 'Đã cọc' ? 'selected' : '' ?>>Đã cọc</option>
+                            <option value="Hoàn tất" <?= $c['payment_status'] == 'Hoàn tất' ? 'selected' : '' ?>>Hoàn tất</option>
+                          </select>
+                        </div>
+                        <div class="mb-3">
+                          <label>Yêu cầu cá nhân</label>
+                          <textarea class="form-control" name="special_requirements" rows="2"><?= htmlspecialchars($c['special_requirements'] ?? '') ?></textarea>
                         </div>
                       </div>
-                      <hr>
-                      <p><strong>Chứng chỉ:</strong> 
-                        <?php 
-                        $cert = json_decode($g['certificate'] ?? '[]', true);
-                        echo is_array($cert) ? implode(', ', $cert) : ($g['certificate'] ?? 'Chưa có');
-                        ?>
-                      </p>
-                      <p><strong>Ngôn ngữ:</strong> 
-                        <?php 
-                        $langs = json_decode($g['languages'] ?? '[]', true);
-                        echo is_array($langs) ? implode(', ', $langs) : ($g['languages'] ?? 'Chưa có');
-                        ?>
-                      </p>
-                      <p><strong>Kinh nghiệm:</strong> <?= htmlspecialchars($g['experience'] ?? 'Chưa có') ?></p>
-                    </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                        <button type="submit" name="update_customer" class="btn btn-primary">Cập nhật</button>
+                      </div>
+                    </form>
                   </div>
                 </div>
               </div>
@@ -107,81 +173,17 @@ ob_start();
   </div>
 </div>
 
-<!-- Add Modal -->
-<div class="modal fade" id="addModal" tabindex="-1">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <form method="post">
-        <div class="modal-header">
-          <h5 class="modal-title">Thêm HDV mới</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body">
-          <div class="mb-3">
-            <label>Họ tên <span class="text-danger">*</span></label>
-            <input type="text" class="form-control" name="name" required>
-          </div>
-          <div class="mb-3">
-            <label>Email</label>
-            <input type="email" class="form-control" name="email">
-          </div>
-          <div class="row">
-            <div class="col-md-6 mb-3">
-              <label>Ngày sinh</label>
-              <input type="date" class="form-control" name="birthdate">
-            </div>
-            <div class="col-md-6 mb-3">
-              <label>Điện thoại</label>
-              <input type="text" class="form-control" name="phone">
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-6 mb-3">
-              <label>Nhóm</label>
-              <select class="form-select" name="group_type">
-                <option value="">Chọn nhóm</option>
-                <option value="nội địa">Nội địa</option>
-                <option value="quốc tế">Quốc tế</option>
-                <option value="chuyên tuyến">Chuyên tuyến</option>
-                <option value="chuyên khách đoàn">Chuyên khách đoàn</option>
-              </select>
-            </div>
-            <div class="col-md-6 mb-3">
-              <label>Chuyên môn</label>
-              <input type="text" class="form-control" name="speciality">
-            </div>
-          </div>
-          <div class="mb-3">
-            <label>Chứng chỉ</label>
-            <input type="text" class="form-control" name="certificate">
-          </div>
-          <div class="mb-3">
-            <label>Ngôn ngữ</label>
-            <input type="text" class="form-control" name="languages" placeholder="Ví dụ: Tiếng Anh, Tiếng Việt">
-          </div>
-          <div class="mb-3">
-            <label>Kinh nghiệm</label>
-            <textarea class="form-control" name="experience" rows="3"></textarea>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-          <button type="submit" name="add_guide" class="btn btn-primary">Thêm</button>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
+
 
 <?php
 $content = ob_get_clean();
 
 view('layouts.AdminLayout', [
-    'title' => 'Quản lý HDV',
-    'pageTitle' => 'Quản lý Hướng dẫn viên',
+    'title' => 'Quản lý Khách hàng',
+    'pageTitle' => 'Quản lý Khách hàng',
     'content' => $content,
     'breadcrumb' => [
-        ['label' => 'HDV', 'url' => BASE_URL . 'admin/guides', 'active' => true],
+        ['label' => 'Khách hàng', 'url' => BASE_URL . 'admin/customers', 'active' => true],
     ],
 ]);
 ?>
